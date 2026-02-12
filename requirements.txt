@@ -1,0 +1,26 @@
+# Core Streamlit app framework
+streamlit>=1.42.0               # Latest stable series as of early 2026
+
+# LLM & LangChain ecosystem
+langchain>=0.3.0                # Core LangChain (chains, prompts, etc.)
+langchain-community>=0.3.0      # Community integrations & tools
+langchain-google-genai>=2.0.0   # Google Gemini integration
+
+# Database & SQL handling
+sqlalchemy>=2.0.0               # ORM & connection pooling
+psycopg2-binary>=2.9.10         # PostgreSQL driver (binary = no compilation needed)
+pymysql>=1.1.0                  # MySQL driver (kept even if not actively used yet)
+
+# Vector database & embeddings
+qdrant-client>=1.12.0           # Qdrant vector DB client (matches your docker image)
+sentence-transformers>=3.0.0    # Embedding models (BAAI/bge-m3 support)
+
+# Utilities
+pyyaml>=6.0.2                   # Config file parsing
+python-dotenv>=1.0.1            # .env file loading
+sqlparse>=0.5.0                 # SQL formatting & normalization
+pandas>=2.2.0                   # DataFrames in Streamlit & ingestion
+javalang>=0.13.0                # Optional – Java parsing (if you plan to analyze Java-based queries later?)
+
+# Optional but commonly useful in such projects
+tqdm>=4.66.0                    # Progress bars during ingestion (recommended)
