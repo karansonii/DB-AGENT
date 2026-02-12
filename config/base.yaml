@@ -1,0 +1,24 @@
+  project_name: eGP
+embedding_model: BAAI/bge-m3
+vector_size: 1024
+
+log_level: INFO
+
+mysql:
+  host: localhost
+  port: 3307
+  user: root
+  password: devpass
+  db: egp_{{env}}
+
+postgres:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: devpass
+  db: central_repo_{{env}}
+
+qdrant:
+  host: localhost
+  port: 6334
+  collection: knowledge
