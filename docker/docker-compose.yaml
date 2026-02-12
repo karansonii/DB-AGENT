@@ -1,0 +1,102 @@
+```dockercompose
+# docker/docker-compose.yml
+# Updated February 2026 - removed obsolete version line, fixed Qdrant image tag
+
+services:
+  mysql-dev:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: devpass
+      MYSQL_DATABASE: egp_dev
+    ports:
+      - "3307:3306"                  # Host:3307 → Container:3306
+    volumes:
+      - mysql-dev-data:/var/lib/mysql
+    profiles: ["dev"]
+
+  postgres-dev:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: central_repo_dev
+    ports:
+      - "5433:5432"                  # Host:5433 → Container:5432
+    volumes:
+      - pg-dev-data:/var/lib/postgresql/data
+    profiles: ["dev"]
+
+  qdrant-dev:
+    image: qdrant/qdrant:v1.12.0     # ← FIXED: real tag that exists (stable 2025/2026 release)
+    ports:
+      - "6334:6333"                  # REST API
+      - "6335:6334"                  # gRPC (optional but useful)
+    volumes:
+      - qdrant-dev-data:/qdrant/storage
+    profiles: ["dev"]
+
+  # ────────────────────────────────────────────────
+  # QA environment services (example – expand as needed)
+  # ────────────────────────────────────────────────
+
+  mysql-qa:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: qapass
+      MYSQL_DATABASE: egp_qa
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-qa-data:/var/lib/mysql
+    profiles: ["qa"]
+
+  postgres-qa:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: qapass
+      POSTGRES_DB: central_repo_qa
+    ports:
+      - "5434:5432"
+    volumes:
+      - pg-qa-data:/var/lib/postgresql/data
+    profiles: ["qa"]
+
+  qdrant-qa:
+    image: qdrant/qdrant:v1.12.0
+    ports:
+      - "6336:6333"
+      - "6337:6334"
+    volumes:
+      - qdrant-qa-data:/qdrant/storage
+    profiles: ["qa"]
+
+  # ────────────────────────────────────────────────
+  # Streamlit App Service (runs your Python code)
+  # ────────────────────────────────────────────────
+
+  app:
+    build:
+      context: ..                     # build from project root
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      - ..:/app                       # mount project code
+    command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
+    depends_on:
+      - mysql-${ENV:-dev}
+      - postgres-${ENV:-dev}
+      - qdrant-${ENV:-dev}
+    environment:
+      - ENV=${ENV:-dev}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    profiles: ["app"]
+
+volumes:
+  mysql-dev-data:
+  pg-dev-data:
+  qdrant-dev-data:
+  mysql-qa-data:
+  pg-qa-data:
+  qdrant-qa-data:
+  # Add more volumes for uat/prod when you expand
+```
